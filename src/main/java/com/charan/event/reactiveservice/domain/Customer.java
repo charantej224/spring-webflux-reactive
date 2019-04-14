@@ -54,4 +54,14 @@ public class Customer {
     public void setBankName(String bankName) {
         this.bankName = bankName;
     }
+
+    @Override
+    public String toString() {
+        return "Customer{" +
+                "id='" + id + '\'' +
+                ", name='" + name + '\'' +
+                ", occupation='" + occupation + '\'' +
+                ", bankName='" + bankName + '\'' +
+                '}';
+    }
 }

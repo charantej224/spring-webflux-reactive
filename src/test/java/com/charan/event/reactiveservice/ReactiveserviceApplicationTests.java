@@ -1,15 +1,15 @@
 package com.charan.event.reactiveservice;
 
-import com.charan.event.reactiveservice.domain.Account;
+import com.charan.event.reactiveservice.domain.Customer;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.reactive.function.client.ClientRequest;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -32,20 +32,14 @@ public class ReactiveserviceApplicationTests {
 
     @Test
     public void contextLoads() {
-        Account account = new Account();
-        account.setId("123");
-        account.setOwner("Charan");
-        account.setValue(new Double(1234567890));
 
-
-        Mono<Account> response = webClient.post().uri("http://localhost:8090/saveMono")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .accept(MediaType.APPLICATION_JSON_UTF8)
-                .body(Mono.just(account), Account.class)
-                .exchange()
-                .flatMap(clientResponse -> clientResponse.bodyToMono(Account.class));
-        response.subscribe(System.out::println);
-
+       Flux<Customer> customerFlux = webClient.get().uri("http://localhost:7609/customers")
+                .header("content-type","application/json")
+                .exchange().flatMapMany(clientResponse ->
+                clientResponse.bodyToFlux(Customer.class));
+        System.out.println("printing response");
+        customerFlux.subscribe( customer ->
+                System.out.println(customer));
     }
 
 }
